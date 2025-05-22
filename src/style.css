@@ -3,13 +3,17 @@
 }
 
 body {
-    background: #f0f0f0;
-    font-family: "Bebas Neue";
+    background: #ff6e01;
+    font-family: "Ancizar Serif";
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 1% auto;
     overflow-x: hidden;
+}
+
+h1 {
+     font-family: "Bebas Neue";
 }
 
 canvas {
@@ -18,7 +22,7 @@ canvas {
 }
 
 a.save {
-    font-family: "Bebas Neue";
+    font-family: "Ancizar Serif";
     font-size: 30px;
     color: white;
     padding: 10px 25px 6px 25px;
@@ -34,29 +38,31 @@ a.save:hover {
 }
 
 button {
-    font-family: "Bebas Neue";
+    font-family: "Ancizar Serif";
     font-size: 30px;
     color: black;
     padding: 10px 10px 6px 10px;
     margin: 10px;
-    background-color: #b5c83e;
+    background-color: #00EA29;
     border-style: hidden;
     text-decoration: none;
     flex-shrink: 0;
 }
 
 button:hover:active {
-    background-color: #b5c83e;
-    border-color: #b5c83e;
+    color: white;
+    background-color: black;
+    border-color: black;
 }
 
 button:hover {
-    background-color: #c8dd45;
-    border-color: #c8dd45;
+    color: white;
+    background-color: black;
+    border-color: black;
 }
 
 input {
-    font-family: "Bebas Neue";
+    font-family: "Ancizar Serif";
     height: 52px;
     font-size: 30px;
     border-radius: 0;
@@ -71,7 +77,7 @@ input:focus {
 }
 
 input::placeholder {
-    font-family: "Bebas Neue";
+    font-family: "Ancizar Serif";
     font-size: 30px;
 }
 

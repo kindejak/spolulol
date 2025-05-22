@@ -1,8 +1,8 @@
-import { claims, generators } from "./data.js";
+import { claims, claimsTitle, generators } from "./data.js";
 import { splitText, pickRandom, getAverageLuminance } from "./helperFunctions.js";
 
-const LOGO_OFFSET_X = 525;
-const LOGO_OFFSET_Y = 20;
+const LOGO_OFFSET_X = 680;
+const LOGO_OFFSET_Y = 680;
 const LUMINANCE_THRESHOLD = 0.7;
 
 const unrolledGenerators = generators.flatMap(({ url, weight }) => Array(weight).fill(url));
@@ -15,8 +15,13 @@ logoLight.src = "public/logo-light.png";
 const logoDark = new Image();
 logoDark.src = "public/logo-dark.png";
 
+
+const logoSpolu = new Image();
+logoSpolu.src = "public/SPOLU-kampan-2025-crop.png";
+
 let currentImage = new Image();
 let currentText = "Test text";
+let currentText2 = "Test text";
 
 const rerollImage = async () => {
   const imageData = await fetch(pickRandom(unrolledGenerators));
@@ -36,15 +41,18 @@ const rerollImage = async () => {
 
 const rerollText = () => {
   currentText = pickRandom(claims);
+  currentText2 = pickRandom(claimsTitle);
 };
 
 const canvas = document.getElementById("picture");
 const ctx = canvas.getContext("2d");
 const font = new FontFace("Bebas Neue", "url(public/BebasNeue-Bold.ttf)");
+const font_a = new FontFace("Ancizar Serif", "url(public/AncizarSerif-Regular.ttf)");
 
 const initFont = async () => {
   await font.load();
   document.fonts.add(font);
+  document.fonts.add(font_a);
 };
 
 const setFile = (file) => {
@@ -67,46 +75,47 @@ canvas.addEventListener("drop", (e) => {
 });
 
 const repaintImage = async () => {
-  // clear to black (for transparent images)
+  // Clear canvas to black (for transparent images)
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // scale image to always fill the canvas
+  // Scale image to always fill the canvas
   const scaleX = canvas.width / currentImage.width;
   const scaleY = canvas.height / currentImage.height;
   const scale = Math.max(scaleX, scaleY);
   ctx.setTransform(scale, 0, 0, scale, 0, 0);
   ctx.drawImage(currentImage, 0, 0);
-  ctx.setTransform(); // reset so that everything else is normal size
+  ctx.setTransform(); // Reset transform
 
-  // calculate luminance to decide whether the logo will be light or dark
-  const imgd = ctx
-    .getImageData(LOGO_OFFSET_X, LOGO_OFFSET_Y, logoLight.width, logoLight.height)
-    .data;
-  const luminanceAverage = getAverageLuminance(imgd);
+  // === BOTTOM GREEN TEXT BANNER ===
+  const title = inputCustom2.value || currentText2;
+  const subtitle = inputCustom.value || currentText;
 
-  if (luminanceAverage > LUMINANCE_THRESHOLD) { // make logo black if the top-right corner is bright
-    ctx.drawImage(logoDark, LOGO_OFFSET_X, LOGO_OFFSET_Y);
-  } else {
-    ctx.drawImage(logoLight, LOGO_OFFSET_X, LOGO_OFFSET_Y);
-  }
+  const titleFontSize = 60;
+  const subtitleFontSize = 30;
+  const padding = 20;
+  const lineSpacing = 10;
+  const totalHeight = padding * 2 + titleFontSize + subtitleFontSize + lineSpacing + 120;
+  const bannerY = canvas.height - totalHeight ;
 
-  const lines = splitText(currentText, 20).reverse();
-  const fontSize = lines.length < 5 ? 60 : 40;
-  ctx.font = `${fontSize}px 'Bebas Neue'`;
-  lines.forEach((line, index) => {
-    const x = 30;
-    const y = 685;
-    const padding = 15;
-    const lineHeight = padding + fontSize;
-    ctx.fillStyle = "#f9dc4d";
-    ctx
-      .fillRect(x, y - (index * lineHeight), ctx.measureText(line).width + 2 * padding, lineHeight);
-    ctx.textBaseline = "top";
-    ctx.fillStyle = "black";
-    ctx.fillText(line, x + padding, y + padding - (index * lineHeight));
-  });
+  // Green rectangle across the bottom
+  ctx.fillStyle = "#00EA29";
+  ctx.fillRect(0, bannerY, canvas.width, totalHeight);
+
+  // Draw title
+  ctx.fillStyle = "black";
+  ctx.font = `${titleFontSize}px 'Bebas Neue'`;
+  ctx.fillText(title, 30, bannerY + padding * 4);
+
+  // Draw subtitle
+  ctx.font = `${subtitleFontSize}px 'Ancizar Serif'`;
+  ctx.fillText(subtitle, 30, bannerY + padding * 3 + titleFontSize + lineSpacing);
+
+  ctx.drawImage(logoSpolu, LOGO_OFFSET_X, LOGO_OFFSET_Y);
+
 };
+
+
 
 imageReader.addEventListener("load", (e) => {
   currentImage = new Image();
@@ -156,8 +165,18 @@ const replaceWithCustomText = async (e) => {
 inputCustom.addEventListener("click", replaceWithCustomText);
 inputCustom.addEventListener("input", replaceWithCustomText);
 
+const inputCustom2 = document.getElementById("customTextTitle");
+const replaceWithCustomText2 = async (e) => {
+  if (e.type === "input" || inputCustom2.value) {
+    currentText2 = inputCustom2.value;
+    repaintImage();
+  }
+};
+inputCustom2.addEventListener("click", replaceWithCustomText2);
+inputCustom2.addEventListener("input", replaceWithCustomText2)
+
 const downloadLinkReal = document.createElement("a");
-downloadLinkReal.setAttribute("download", "PirStanKampan.jpg");
+downloadLinkReal.setAttribute("download", "spolu-stat.jpg");
 const linkSave = document.getElementById("save");
 linkSave.addEventListener("click", (e) => {
   e.preventDefault();
